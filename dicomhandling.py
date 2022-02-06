@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-Spyder Editor
+R&D coding test
 
-This is a temporary script file.
+Alicia Pons Guinot
 """
 
+#Import libraries
 
 import os
 
@@ -12,9 +13,12 @@ import numpy as np
 
 from PIL import Image
 
-import pydicom as dicom
+import pydicom as dicom #read cdm images
 
-from scipy import ndimage as nd #aplicar el filtro gaussiano
+from scipy import ndimage as nd #gaussian filter
+
+
+#Create a DcmFilter class
 
 class DcmFilter:
     
@@ -31,11 +35,14 @@ class DcmFilter:
         self.ipp = dicom.dcmread(path).ImagePositionPatient._list
    
 
+#Create a DcmRotate class
+
 class DcmRotate:
     def __init__(self, path, angle=180):
          
         #a. Read and store a DICOM file’s pixel data as NumPy array.
-        self.original = DcmFilter(path).original
+        self.original = DcmFilter(path).original 
+        #instead of repeating dicom.dcmread(path).pixel_array
         
         #b. Rotate the image (multiples of 90º with a default angle of 180º), 
         #storing the resulting NumPy array.
@@ -43,8 +50,10 @@ class DcmRotate:
         
         #c. Read the ImagePositionPatient DICOM tag and store it as a 3 item list.
         self.ipp = DcmFilter(path).ipp
-        
-        
+        #instead of repeating dicom.dcmread(path).ImagePositionPatient._list
+       
+# Create check_ipp method
+
 def check_ipp(dcm_filter, dcm_rotate):
         
         dcm_filter_ipp = dcm_filter.ipp
@@ -56,7 +65,8 @@ def check_ipp(dcm_filter, dcm_rotate):
             return False    
         
         
-# define Python user-defined exceptions
+# Define Python user-defined exceptions
+
 class Error(Exception):
     """Base class for other exceptions"""
     pass
@@ -69,9 +79,12 @@ class IncorrectNumberOfImages(Error):
 class SameImagePositionPatient(Error):
     """Raised when ipp is the same"""
     pass     
+
+# The code above gets the input_folder, that will be "images", and gets 
  
 def main(input_folder):
     
+        #get the name o
         ld = os.listdir(input_folder)
         try:
             
