@@ -19,7 +19,6 @@ from scipy import ndimage as nd #gaussian filter
 
 
 #Create a DcmFilter class
-
 class DcmFilter:
     
     def __init__(self, path, sigma=3):
@@ -36,7 +35,6 @@ class DcmFilter:
    
 
 #Create a DcmRotate class
-
 class DcmRotate:
     def __init__(self, path, angle=180):
          
@@ -51,9 +49,9 @@ class DcmRotate:
         #c. Read the ImagePositionPatient DICOM tag and store it as a 3 item list.
         self.ipp = DcmFilter(path).ipp
         #instead of repeating dicom.dcmread(path).ImagePositionPatient._list
+        
        
-# Create check_ipp method
-
+# Create check_ipp method. This code returns the bool "True" if both objects have the same ipp
 def check_ipp(dcm_filter, dcm_rotate):
         
         dcm_filter_ipp = dcm_filter.ipp
@@ -66,7 +64,6 @@ def check_ipp(dcm_filter, dcm_rotate):
         
         
 # Define Python user-defined exceptions
-
 class Error(Exception):
     """Base class for other exceptions"""
     pass
@@ -80,60 +77,70 @@ class SameImagePositionPatient(Error):
     """Raised when ipp is the same"""
     pass     
 
-# The code above gets the input_folder, that will be "images", and gets 
- 
-def main(input_folder):
+
+# The following code receives as input the folder containing the images. 
+ def main(input_folder):
     
-        #get the name o
+        #Returns a list containing the names of the entries in the directory given by path
         ld = os.listdir(input_folder)
         try:
             
             if len(ld) != 2:
-                
                 raise IncorrectNumberOfImages
+             
+            #The following code is executed if the number of images is exactly 2
             else:
                 
+                #Create a path for each image
                 path1 = os.path.join(input_folder, ld[0])
                 path2 = os.path.join(input_folder, ld[1])
-                    
+                  
+                #Create the objects dcm1 and dmc2 of a given class (instantiate the class DcmFilter)
                 dcm1 = DcmFilter(path1, 3)
                 dcm2 = DcmFilter(path2, 3)
                 
+                #The following code checks if the objects dcm1 and dcm2 have the same ipp. If this happens, a custom exception appears
                 try:
                     if check_ipp(dcm1,dcm2):
                         raise SameImagePositionPatient
-                    
+                        
+                    #The code below is executed if the images do not have the same ipp (path)
                     else: 
                         
+                        #Create the attributes original1 and original2 from the objects dcm1 and dcm2.
+                        #These attributes store the original pixels as a NumPy array
                         original1 = dcm1.original
                         original2 = dcm2.original
                         
+                        #Subtraction operation to obtain the first residue image
                         res1 = original1-original2
                         
+                        #Create the attributes filter1 and filter2 from the objects dcm1 and dcm2.
+                        #These attributes store the pixels after applying the gaussian filter as a NumPy array
                         filter1 = dcm1.filtered
                         filter2 = dcm2.filtered
                         
+                        #Subtraction operation to obtain the second residue image
                         res2 = filter1-filter2
                         
+                        #Create the output directory where the residue images will be saved
                         output_dir = os.path.join(input_folder, 'residues')
                         os.mkdir(output_dir)
-                        im1 = Image.fromarray(res1)
-            
                         
+                        im1 = Image.fromarray(res1)
                         im1.mode = 'I'
                         im1.point(lambda i:i*(1./256)).convert('L').save(os.path.join(output_dir, 'res1.jpeg'))
                   
-                        im2 = Image.fromarray(res2)
-                       
-                        
+                        im2 = Image.fromarray(res2) 
                         im2.mode = 'I'
                         im2.point(lambda i:i*(1./256)).convert('L').save(os.path.join(output_dir, 'res2.jpeg'))
                   
-                    
+                #If the images have the same ipp (path), a custom exception appears   
                 except SameImagePositionPatient:
                      print("The DICOM files appear to be the same. Abborting.")
                      print()
- 
+                    
+        #If the number of images in the folder is not exactly 2, a custom exception appears
         except IncorrectNumberOfImages:
             print("Incorrect number of images. Aborting.")
             print()
