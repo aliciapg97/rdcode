@@ -6,10 +6,6 @@ This is a temporary script file.
 """
 
 
-#default angle en DcmRotate (exception?)
-
-
-
 import os
 
 import numpy as np
