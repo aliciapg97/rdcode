@@ -4,7 +4,7 @@ Description: DICOM images manipulation
 
 The module dicomhandling should be run like: 
 
-python -m dicomhandling input_folder
+python -m dicomhandling images
 
 The result is the creation of a sub-folder inside "images" called "residues" that contains:
 
