@@ -1,5 +1,5 @@
 # rdcode
-DICOM images manipulation 
+Description: DICOM images manipulation 
 
 
 The module dicomhandling should be run like: 
