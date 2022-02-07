@@ -127,6 +127,7 @@ class SameImagePositionPatient(Error):
                         output_dir = os.path.join(input_folder, 'residues')
                         os.mkdir(output_dir)
                         
+                        #The subtraction of image pixels leads to some formatting errors that do not allow images to be saved.
                         im1 = Image.fromarray(res1)
                         im1.mode = 'I'
                         im1.point(lambda i:i*(1./256)).convert('L').save(os.path.join(output_dir, 'res1.jpeg'))
@@ -145,6 +146,7 @@ class SameImagePositionPatient(Error):
             print("Incorrect number of images. Aborting.")
             print()
 
+#In order to run the module as if it was a script, we implement the "main" method
 if __name__ == '__main__':
     main('images')
 
